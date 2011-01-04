@@ -13,7 +13,7 @@
 Drupal.behaviors.book_ui = {
   attach: function (context, settings) {
     //Drupal.behaviors.book_ui.navSlider();
-    //Drupal.behaviors.book_ui.paging();
+    Drupal.behaviors.book_ui.paging();
     Drupal.behaviors.book_ui.sidebarSliding();
   },
 
@@ -87,30 +87,41 @@ Drupal.behaviors.book_ui = {
     var sidebar = $(".sidebar");
     $("#main").append('<div class="sidebar-toggle"></div>');
     var sidebar_toggle = $(".sidebar-toggle");
-    var content = $(".node-book .content");
+    var content = $(".node-type-book .region-content");
 
+    // Add init values to sidebar_toggle
     sidebar_toggle.addClass("left-arrow");
     sidebar_toggle.css("top", Math.ceil(sidebar.height() / 2) - 50);
-
     // @todo: what about first sidebar from right?
     sidebar_toggle.css("left", sidebar.find(".section").width());
 
     sidebar_toggle.click(function() {
       sidebar.toggle("slide", { direction: "left" }, 200);
 
+      // if not sidebar is not hidden, hide it
       if (sidebar_toggle.css("left") == "0px") {
         sidebar_toggle.css("left", sidebar.find(".section").width());
         sidebar_toggle.removeClass("right-arrow");
         sidebar_toggle.addClass("left-arrow");
-        content.width(content.width() - sidebar.width());
+
+        Drupal.behaviors.setDimensions(content, content.height(), content.width() - sidebar.width());
       }
       else {
         sidebar_toggle.css("left", "0px");
         sidebar_toggle.removeClass("left-arrow");
         sidebar_toggle.addClass("right-arrow");
-        content.width(content.width() + sidebar.width());
+
+        Drupal.behaviors.setDimensions(content, content.height(), content.width() + sidebar.width());
       }
     });
+  },
+
+  /**
+   * Set content height and width to the most suitable value
+   */
+  setDimensions: function(element, height, width) {
+    $(element).height(height);
+    $(element).width(width);
   },
 };
 
