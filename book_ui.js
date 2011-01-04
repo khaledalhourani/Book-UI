@@ -1,7 +1,6 @@
 // $Id$
 /*
  * @todo
- *  refactor sidebarSliding
  *  paging
  *  navSlider
  */
