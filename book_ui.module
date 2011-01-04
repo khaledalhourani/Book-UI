@@ -3,7 +3,10 @@
 
 /**
  * @file
- * Main file for the Book UI module, for better books reading experince.
+ *   Main file for the Book UI module, for better books reading experince.
+ *
+ * @todo
+ *   Ajax paging
  */
 
 /**
