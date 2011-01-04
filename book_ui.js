@@ -7,7 +7,8 @@
 Drupal.behaviors.book_ui = {
   attach: function (context, settings) {
     //Drupal.behaviors.book_ui.navSlider();
-    Drupal.behaviors.book_ui.paging();
+    //Drupal.behaviors.book_ui.paging();
+    Drupal.behaviors.book_ui.sidebarSliding();
   },
 
   /**
@@ -41,6 +42,9 @@ Drupal.behaviors.book_ui = {
     });
   },
 
+  /**
+   * Desc
+   */
   paging: function () {
     // @todo: substring for words instead of chars
     var content = $(".node-book .content");
@@ -67,6 +71,39 @@ Drupal.behaviors.book_ui = {
 
     $(window).resize(function(){
       content.height($(window).height() - 100);
+    });
+  },
+
+  /**
+   * Desc
+   */
+  sidebarSliding: function() {
+    var sidebar = $(".sidebar");
+    $("#main").append('<div class="sidebar-toggle"></div>');
+    var sidebar_toggle = $(".sidebar-toggle");
+    var content = $(".node-book .content");
+
+    sidebar_toggle.addClass("left-arrow");
+    sidebar_toggle.css("top", Math.ceil(sidebar.height() / 2) - 50);
+
+    // @todo: what about first sidebar from right?
+    sidebar_toggle.css("left", sidebar.find(".section").width());
+
+    sidebar_toggle.click(function() {
+      sidebar.toggle("slide", { direction: "left" }, 200);
+
+      if (sidebar_toggle.css("left") == "0px") {
+        sidebar_toggle.css("left", sidebar.find(".section").width());
+        sidebar_toggle.removeClass("right-arrow");
+        sidebar_toggle.addClass("left-arrow");
+        content.width(content.width() - sidebar.width());
+      }
+      else {
+        sidebar_toggle.css("left", "0px");
+        sidebar_toggle.removeClass("left-arrow");
+        sidebar_toggle.addClass("right-arrow");
+        content.width(content.width() + sidebar.width());
+      }
     });
   },
 };

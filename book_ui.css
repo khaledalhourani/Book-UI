@@ -1,0 +1,19 @@
+.sidebar-toggle {
+  background-color: #ccc;
+  background-position: 2px 44px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  height: 100px;
+  position: absolute;
+  width: 20px;
+}
+.sidebar-toggle:hover {
+  background-color: #eee;
+}
+
+.right-arrow {
+  background-image: url("images/right_arrow.png");
+}
+.left-arrow {
+  background-image: url("images/left_arrow.png");
+}

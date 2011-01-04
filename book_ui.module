@@ -67,7 +67,7 @@ function book_ui_node_view($node) {
     return;
   }
 
-  #book_ui_navigation($node->content['book_navigation']);
+  book_ui_navigation($node->content['book_navigation']);
 
   #theme('book_navigation', array('book_link' => $node->book));
   #book_children($node->book);
@@ -75,10 +75,11 @@ function book_ui_node_view($node) {
 
 function book_ui_navigation($nav) {
   drupal_add_library('system', 'ui.slider');
+  drupal_add_library('system', 'effects.slide');
   drupal_add_js(drupal_get_path('module', 'book_ui') . '/jquery.tools.min.js');
 
   global $base_url;
   drupal_add_js(array('base_url' => $base_url), 'setting');
   drupal_add_js(drupal_get_path('module', 'book_ui') . '/book_ui.js');
-  #drupal_add_css(drupal_get_path('module', 'language_switcher') . '/language_switcher.css');
+  drupal_add_css(drupal_get_path('module', 'book_ui') . '/book_ui.css');
 }
