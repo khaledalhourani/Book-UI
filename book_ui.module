@@ -1,0 +1,80 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Main file for the Book UI module, for better books reading experince.
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function book_ui_menu() {
+  $items = array();
+  $items['book_ui/load'] = array(
+    'page callback' => 'book_ui_load',
+    'access callback' => 'user_access',
+    'access arguments' => array('book load'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implement hook_permission().
+ */
+function book_ui_permission() {
+  return array(
+    'book load' => array(
+      'description' => t('Book load and view.'),
+      'title' => t('Book load'),
+    ),
+  );
+}
+
+/**
+ * Callback function for loading book page.
+ *
+ * @param nid
+ *   node id to load it's content.
+ * @return
+ *  required node's content to put it in content div
+ */
+function book_ui_load($nid) {
+  $node = node_load($nid);
+  $body = array_pop($node->body[$node->language]);
+
+  echo $body['value'];
+
+  drupal_exit();
+}
+
+/**
+ * Implements hook_init().
+ */
+function book_ui_init() {
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function book_ui_node_view($node) {
+  if ($node->type != 'book') {
+    return;
+  }
+
+  #book_ui_navigation($node->content['book_navigation']);
+
+  #theme('book_navigation', array('book_link' => $node->book));
+  #book_children($node->book);
+}
+
+function book_ui_navigation($nav) {
+  drupal_add_library('system', 'ui.slider');
+  drupal_add_js(drupal_get_path('module', 'book_ui') . '/jquery.tools.min.js');
+
+  global $base_url;
+  drupal_add_js(array('base_url' => $base_url), 'setting');
+  drupal_add_js(drupal_get_path('module', 'book_ui') . '/book_ui.js');
+  #drupal_add_css(drupal_get_path('module', 'language_switcher') . '/language_switcher.css');
+}

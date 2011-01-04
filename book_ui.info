@@ -1,0 +1,5 @@
+; $Id$
+name = Book UI
+description = Better reading experince
+dependencies[] = book
+core = 7.x
