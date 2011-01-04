@@ -1,3 +1,9 @@
+.items {
+}
+.items p {
+  margin: 0;
+}
+
 .sidebar-toggle {
   background-color: #ccc;
   background-position: 2px 44px;

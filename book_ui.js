@@ -1,7 +1,7 @@
 // $Id$
 /*
  * @todo
- *  paging
+ *  paging fix bugs on resize
  *  navSlider
  */
 (function ($) {
@@ -14,6 +14,7 @@ Drupal.behaviors.book_ui = {
     //Drupal.behaviors.book_ui.navSlider();
     Drupal.behaviors.book_ui.paging();
     Drupal.behaviors.book_ui.sidebarSliding();
+    Drupal.behaviors.book_ui.actions();
   },
 
   /**
@@ -48,39 +49,42 @@ Drupal.behaviors.book_ui = {
   },
 
   /**
-   * Desc
+   * Divide a long book page into several pages
    */
   paging: function () {
-    // @todo: substring for words instead of chars
     var content = $(".node-book .content");
-    var body = $(".node-book .content .field-name-body .field-item");
+
+    var body = $(".node-book .content .field-name-body");
+    if (body.length == 0) {
+      body = $(".node-book .content .items");
+    }
 
     var original_height = content.height();
-    var new_height = $(window).height() - 100;
-    var pages_num = Math.ceil(original_height / new_height);
-    var num_words = jQuery.trim(body.text()).split(' ').length;
-    var words_per_page = Math.ceil(num_words / pages_num);
+    var new_height = $(window).height() - ($("#content").height() - original_height);
+    var pages_count = Math.floor(original_height / new_height);
 
-    body.hide();
+    var words = body.getWords();
+    var words_count = words.length;
+    var words_per_page = Math.ceil(words_count / pages_count);
+
+    body.remove();
+
     content.append("<div class=\"pages-scroller\"><div class=\"items\"></div></div>");
     var items = content.find(".items");
 
-    var i = 0;
-    for (i = 0; i < pages_num; i++) {
-      items.append("<div>" + body.text().substring((words_per_page * i), words_per_page) + "</div>");
+    var words_counter = 0;
+    for (i = 0; i < pages_count; i++) {
+      var text_per_page = "<p>";
+      for (j = 0; j < words_per_page; j++) {
+        text_per_page += words[words_counter++] + " ";
+      }
+      text_per_page += "</p>";
+      items.append(text_per_page);
     }
-
-    $(".node-book .content .field-name-body").remove();
-
-    //content.height($(window).height() - 100);
-
-    $(window).resize(function(){
-      content.height($(window).height() - 100);
-    });
   },
 
   /**
-   * Desc
+   * Provides a sliding sidebar
    */
   sidebarSliding: function() {
     var sidebar = $(".sidebar");
@@ -103,14 +107,14 @@ Drupal.behaviors.book_ui = {
         sidebar_toggle.removeClass("right-arrow");
         sidebar_toggle.addClass("left-arrow");
 
-        Drupal.behaviors.setDimensions(content, content.height(), content.width() - sidebar.width());
+        Drupal.behaviors.book_ui.setDimensions(content, content.height(), content.width() - sidebar.width());
       }
       else {
         sidebar_toggle.css("left", "0px");
         sidebar_toggle.removeClass("left-arrow");
         sidebar_toggle.addClass("right-arrow");
 
-        Drupal.behaviors.setDimensions(content, content.height(), content.width() + sidebar.width());
+        Drupal.behaviors.book_ui.setDimensions(content, content.height(), content.width() + sidebar.width());
       }
     });
   },
@@ -122,6 +126,23 @@ Drupal.behaviors.book_ui = {
     $(element).height(height);
     $(element).width(width);
   },
+
+  /**
+   * Actions events
+   */
+  actions: function() {
+    $(window).resize(function() {
+      Drupal.behaviors.book_ui.paging();
+    });
+
+    $(".fonts-widget-button").click(function() {
+      Drupal.behaviors.book_ui.paging();
+    });
+  },
+};
+
+jQuery.fn.getWords = function() {
+  return jQuery.trim(this.html().replace(/<\/?[^>]+>/gi, '')).split(' ');
 };
 
 })(jQuery);
