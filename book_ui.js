@@ -81,18 +81,19 @@ Drupal.behaviors.book_ui = {
       items.append(text_per_page);
     }
 
-    // @todo: only add once?
+    // Pager settings
+    $(".pages-scroller").prepend("<div class=\"book-ui-pager\" id=\"pager-right\">›</div>").append("<div class=\"book-ui-pager\" id=\"pager-left\">‹</div>");
+
+    $(".book-ui-pager").css("top", new_height / 2);
+    $("#pager-right").css("right", "20px");
+    $("#pager-left").css("left", "20px");
+
     $(".items").cycle({
-      fx: 'scrollLeft',
-      //speed: 'fast',
+      fx: 'scrollHorz',
       timeout: 0,
-      prev: '#pager-left'
-    });
-    $(".items").cycle({
-      fx: 'scrollRight',
-      //speed: 'fast',
-      timeout: 0,
-      next: '#pager-right',
+      nowrap: true,
+      next: '#pager-left',
+      prev: '#pager-right',
     });
   },
 
@@ -155,14 +156,26 @@ Drupal.behaviors.book_ui = {
     $(".sidebar-toggle").click(function() {
       Drupal.behaviors.book_ui.paging();
     });
-
-    $(".node-book").prepend("<div id=\"pager-right\">right</div>").append("<div id=\"pager-left\">left</div>");
   },
 };
 
-jQuery.fn.getWords = function() {
+$.fn.getWords = function() {
   return jQuery.trim(this.text()).split(' ');
   //return jQuery.trim(this.html().replace(/<\/?[^>]+>/gi, '')).split(' ');
+};
+
+$.fn.cycle.transitions.scrollHorz = function($cont, $slides, opts) {
+  $cont.css('overflow','hidden').width();
+  opts.before.push(function(curr, next, opts, fwd) {
+    fwd = !fwd;  //  RTL
+    $.fn.cycle.commonReset(curr, next, opts);
+    opts.cssBefore.left = fwd ? (next.cycleW-1) : (1-next.cycleW);
+    opts.animOut.left = fwd ? -curr.cycleW : curr.cycleW;
+  });
+  opts.cssFirst = { left: 0 };
+  opts.cssBefore= { top: 0 };
+  opts.animIn   = { left: 0 };
+  opts.animOut  = { top: 0 };
 };
 
 })(jQuery);

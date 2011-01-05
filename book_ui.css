@@ -9,6 +9,19 @@
   margin: 0;
 }
 
+.book-ui-pager {
+  color: #333;
+  direction: ltr;
+  font-size: 64px;
+  font-weight: bold;
+  position: absolute;
+  cursor: pointer;
+}
+#pager-right {
+}
+#pager-left {
+}
+
 .sidebar-toggle {
   background-color: #ccc;
   background-position: 2px 44px;
