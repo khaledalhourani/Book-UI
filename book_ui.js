@@ -1,7 +1,7 @@
 // $Id$
 /*
  * @todo
- *  paging fix bugs on resize
+ *  paging fix bugs on window resize
  *  navSlider
  */
 (function ($) {
@@ -61,26 +61,39 @@ Drupal.behaviors.book_ui = {
 
     var original_height = content.height();
     var new_height = $(window).height() - ($("#content").height() - original_height);
-    var pages_count = Math.floor(original_height / new_height);
-
+    var pages_count = Math.ceil(original_height / new_height);
     var words = body.getWords();
     var words_count = words.length;
     var words_per_page = Math.ceil(words_count / pages_count);
 
-    body.remove();
-
-    content.append("<div class=\"pages-scroller\"><div class=\"items\"></div></div>");
+    content.html("<div class=\"pages-scroller\"><div class=\"items\"></div></div>");
     var items = content.find(".items");
 
-    var words_counter = 0;
+    var index = 0;
     for (i = 0; i < pages_count; i++) {
-      var text_per_page = "<p>";
+      var text_per_page = "<div class=\"part\"><p>";
       for (j = 0; j < words_per_page; j++) {
-        text_per_page += words[words_counter++] + " ";
+        if (typeof words[index] != "undefined") {
+          text_per_page += words[index++] + " ";
+        }
       }
-      text_per_page += "</p>";
+      text_per_page += "</p></div>";
       items.append(text_per_page);
     }
+
+    // @todo: only add once?
+    $(".items").cycle({
+      fx: 'scrollLeft',
+      //speed: 'fast',
+      timeout: 0,
+      prev: '#pager-left'
+    });
+    $(".items").cycle({
+      fx: 'scrollRight',
+      //speed: 'fast',
+      timeout: 0,
+      next: '#pager-right',
+    });
   },
 
   /**
@@ -132,17 +145,24 @@ Drupal.behaviors.book_ui = {
    */
   actions: function() {
     $(window).resize(function() {
-      Drupal.behaviors.book_ui.paging();
+      //Drupal.behaviors.book_ui.paging();
     });
 
     $(".fonts-widget-button").click(function() {
       Drupal.behaviors.book_ui.paging();
     });
+
+    $(".sidebar-toggle").click(function() {
+      Drupal.behaviors.book_ui.paging();
+    });
+
+    $(".node-book").prepend("<div id=\"pager-right\">right</div>").append("<div id=\"pager-left\">left</div>");
   },
 };
 
 jQuery.fn.getWords = function() {
-  return jQuery.trim(this.html().replace(/<\/?[^>]+>/gi, '')).split(' ');
+  return jQuery.trim(this.text()).split(' ');
+  //return jQuery.trim(this.html().replace(/<\/?[^>]+>/gi, '')).split(' ');
 };
 
 })(jQuery);

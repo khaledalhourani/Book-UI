@@ -76,7 +76,7 @@ function book_ui_node_view($node) {
 function book_ui_navigation($nav) {
   drupal_add_library('system', 'ui.slider');
   drupal_add_library('system', 'effects.slide');
-  drupal_add_js(drupal_get_path('module', 'book_ui') . '/jquery.tools.min.js');
+  drupal_add_js(drupal_get_path('module', 'book_ui') . '/jquery.cycle.all.min.js');
 
   global $base_url;
   drupal_add_js(array('base_url' => $base_url), 'setting');
