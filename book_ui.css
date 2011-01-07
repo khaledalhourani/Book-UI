@@ -16,10 +16,21 @@
   font-weight: bold;
   position: absolute;
   cursor: pointer;
+  z-index: 5;
+  height: 32px;
+  width: 32px;
 }
 #pager-right {
+  background: url("images/pager_right.png") no-repeat;
+}
+#pager-right:hover {
+  background: url("images/pager_right_hover.png") no-repeat;
 }
 #pager-left {
+  background: url("images/pager_left.png") no-repeat;
+}
+#pager-left:hover {
+  background: url("images/pager_left_hover.png") no-repeat;
 }
 
 .sidebar-toggle {
@@ -30,6 +41,7 @@
   height: 100px;
   position: absolute;
   width: 20px;
+  z-index: 10;
 }
 .sidebar-toggle:hover {
   background-color: #ddd;

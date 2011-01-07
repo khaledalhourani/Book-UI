@@ -12,9 +12,9 @@
 Drupal.behaviors.book_ui = {
   attach: function (context, settings) {
     //Drupal.behaviors.book_ui.navSlider();
+    Drupal.behaviors.book_ui.actions();
     Drupal.behaviors.book_ui.paging();
     Drupal.behaviors.book_ui.sidebarSliding();
-    Drupal.behaviors.book_ui.actions();
   },
 
   /**
@@ -22,7 +22,7 @@ Drupal.behaviors.book_ui = {
    */
   navSlider: function () {
     var content = $(".node-book .content");
-    var body = $(".node-book .content .field-name-body"); 
+    var body = $(".node-book .content .field-name-body");
     var nav_menu = $(".block-book .menu li");
     var node_url = Drupal.settings.base_url + '/node/';
     var url = Drupal.settings.base_url + '/book_ui/load/';
@@ -54,37 +54,54 @@ Drupal.behaviors.book_ui = {
   paging: function () {
     var content = $(".node-book .content");
 
-    var body = $(".node-book .content .field-name-body");
-    if (body.length == 0) {
-      body = $(".node-book .content .items");
+    if ($(".node-book .content .field-name-body").length > 0) {
+      // original content, get the height directly
+      content_height = content.height();
+      // add fake content, remove it first if there is an old fake content
+      $(".node-book #fake_content").remove();
+      $(".node-book").append("<div id=\"fake_content\">" + content.html() + "</div>");
+      $(".node-book #fake_content").hide();
+    }
+    else {
+      // we can't get the height directly, because cycle changed it
+      // so get it from the fake content
+      content_height = $(".node-book #fake_content").height();
     }
 
-    var original_height = content.height();
-    var new_height = $(window).height() - ($("#content").height() - original_height);
-    var pages_count = Math.ceil(original_height / new_height);
-    var words = body.getWords();
+    // Calculate pages & words per page based on container div height
+    var window_height = $(window).height() - $("#content .not-content").height();
+    var pages_count = Math.floor(content_height / window_height);
+    var words = content.getWords();
     var words_count = words.length;
-    var words_per_page = Math.ceil(words_count / pages_count);
+    var words_in_page = Math.floor(words_count / pages_count);
+    var remainder = words_count % pages_count;
 
+    console.log(content.html());
+    content.empty();
+    console.log(content.html());
     content.html("<div class=\"pages-scroller\"><div class=\"items\"></div></div>");
     var items = content.find(".items");
 
     var index = 0;
     for (i = 0; i < pages_count; i++) {
-      var text_per_page = "<div class=\"part\"><p>";
-      for (j = 0; j < words_per_page; j++) {
+      var text_per_page = "<p>";
+      // if there is a remainder it'll be 1, otherwise won't affect the loop
+      // upper bound
+      for (j = 0; j < words_in_page + remainder; j++) {
         if (typeof words[index] != "undefined") {
           text_per_page += words[index++] + " ";
         }
       }
-      text_per_page += "</p></div>";
+      text_per_page += "</p>";
       items.append(text_per_page);
     }
 
-    // Pager settings
-    $(".pages-scroller").prepend("<div class=\"book-ui-pager\" id=\"pager-right\">›</div>").append("<div class=\"book-ui-pager\" id=\"pager-left\">‹</div>");
+    $(".items").height(Math.floor(window_height) + "px");
 
-    $(".book-ui-pager").css("top", new_height / 2);
+    // Pager settings
+    $(".pages-scroller").prepend("<div class=\"book-ui-pager\" id=\"pager-right\"></div>").append("<div class=\"book-ui-pager\" id=\"pager-left\"></div>");
+console.log(content.html());
+    $(".book-ui-pager").css("top", Math.floor(window_height) / 2 + "px");
     $("#pager-right").css("right", "20px");
     $("#pager-left").css("left", "20px");
 
@@ -108,7 +125,7 @@ Drupal.behaviors.book_ui = {
 
     // Add init values to sidebar_toggle
     sidebar_toggle.addClass("left-arrow");
-    sidebar_toggle.css("top", Math.ceil(sidebar.height() / 2) - 50);
+    sidebar_toggle.css("top", 50);
     // @todo: what about first sidebar from right?
     sidebar_toggle.css("left", sidebar.find(".section").width());
 
@@ -146,11 +163,11 @@ Drupal.behaviors.book_ui = {
    */
   actions: function() {
     $(window).resize(function() {
-      //Drupal.behaviors.book_ui.paging();
+      Drupal.behaviors.book_ui.paging();
     });
 
     $(".fonts-widget-button").click(function() {
-      Drupal.behaviors.book_ui.paging();
+       Drupal.behaviors.book_ui.paging();
     });
 
     $(".sidebar-toggle").click(function() {
@@ -161,7 +178,6 @@ Drupal.behaviors.book_ui = {
 
 $.fn.getWords = function() {
   return jQuery.trim(this.text()).split(' ');
-  //return jQuery.trim(this.html().replace(/<\/?[^>]+>/gi, '')).split(' ');
 };
 
 $.fn.cycle.transitions.scrollHorz = function($cont, $slides, opts) {
