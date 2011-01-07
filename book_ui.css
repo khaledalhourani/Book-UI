@@ -1,9 +1,9 @@
 .items {
 }
 .items .part {
-  /* @todo: we can remove them right? */
+  /* @todo: we can remove them right?
   overflow: hidden;
-  float: right;
+  float: right; */
 }
 .items .part p {
   margin: 0;
@@ -16,7 +16,7 @@
   font-weight: bold;
   position: absolute;
   cursor: pointer;
-  z-index: 5;
+  z-index: 20;
   height: 32px;
   width: 32px;
 }

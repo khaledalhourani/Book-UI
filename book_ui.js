@@ -76,15 +76,13 @@ Drupal.behaviors.book_ui = {
     var words_in_page = Math.floor(words_count / pages_count);
     var remainder = words_count % pages_count;
 
-    console.log(content.html());
     content.empty();
-    console.log(content.html());
     content.html("<div class=\"pages-scroller\"><div class=\"items\"></div></div>");
     var items = content.find(".items");
 
     var index = 0;
     for (i = 0; i < pages_count; i++) {
-      var text_per_page = "<p>";
+      var text_per_page = "<div class=\"part\"><p>";
       // if there is a remainder it'll be 1, otherwise won't affect the loop
       // upper bound
       for (j = 0; j < words_in_page + remainder; j++) {
@@ -92,15 +90,15 @@ Drupal.behaviors.book_ui = {
           text_per_page += words[index++] + " ";
         }
       }
-      text_per_page += "</p>";
+      text_per_page += "</div></p>";
       items.append(text_per_page);
     }
 
-    $(".items").height(Math.floor(window_height) + "px");
+    $(".items").height(Math.floor(window_height));
 
     // Pager settings
     $(".pages-scroller").prepend("<div class=\"book-ui-pager\" id=\"pager-right\"></div>").append("<div class=\"book-ui-pager\" id=\"pager-left\"></div>");
-console.log(content.html());
+
     $(".book-ui-pager").css("top", Math.floor(window_height) / 2 + "px");
     $("#pager-right").css("right", "20px");
     $("#pager-left").css("left", "20px");
@@ -121,7 +119,7 @@ console.log(content.html());
     var sidebar = $(".sidebar");
     $("#main").append('<div class="sidebar-toggle"></div>');
     var sidebar_toggle = $(".sidebar-toggle");
-    var content = $(".node-type-book .region-content");
+    var content = $(".node-book .content");
 
     // Add init values to sidebar_toggle
     sidebar_toggle.addClass("left-arrow");
@@ -132,7 +130,7 @@ console.log(content.html());
     sidebar_toggle.click(function() {
       sidebar.toggle("slide", { direction: "left" }, 200);
 
-      // if not sidebar is not hidden, hide it
+      // if left is 0, the sidebar is hidden, slide it out
       if (sidebar_toggle.css("left") == "0px") {
         sidebar_toggle.css("left", sidebar.find(".section").width());
         sidebar_toggle.removeClass("right-arrow");
@@ -167,7 +165,7 @@ console.log(content.html());
     });
 
     $(".fonts-widget-button").click(function() {
-       Drupal.behaviors.book_ui.paging();
+      Drupal.behaviors.book_ui.paging();
     });
 
     $(".sidebar-toggle").click(function() {
@@ -188,7 +186,7 @@ $.fn.cycle.transitions.scrollHorz = function($cont, $slides, opts) {
     opts.cssBefore.left = fwd ? (next.cycleW-1) : (1-next.cycleW);
     opts.animOut.left = fwd ? -curr.cycleW : curr.cycleW;
   });
-  opts.cssFirst = { left: 0 };
+  opts.cssFirst = { right: 0 };
   opts.cssBefore= { top: 0 };
   opts.animIn   = { left: 0 };
   opts.animOut  = { top: 0 };
