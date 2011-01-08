@@ -3,6 +3,7 @@
  * @todo
  *  paging fix bugs on window resize
  *  navSlider
+ *  keyboard keys support
  */
 (function ($) {
 
