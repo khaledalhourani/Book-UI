@@ -3,7 +3,6 @@
  * @todo
  *  paging fix bugs on window resize
  *  navSlider
- *  keyboard keys support
  */
 (function ($) {
 
@@ -18,6 +17,7 @@ Drupal.behaviors.book_ui = {
     Drupal.behaviors.book_ui.paging();
     Drupal.behaviors.book_ui.sidebarSliding();
     Drupal.behaviors.book_ui.mouseWheel();
+    Drupal.behaviors.book_ui.keyboard();
   },
 
   init: function() {
@@ -192,6 +192,18 @@ Drupal.behaviors.book_ui = {
       // prevent scrolling default behaviour
       event.preventDefault();
       event.stopPropagation();
+    });
+  },
+
+  /**
+   * Adds keyboard paging support
+   */
+  keyboard: function() {
+    $(document).bind('keydown', 'right', function() {
+      $("#pager-right").click();
+    });
+    $(document).bind('keydown', 'left', function() {
+      $("#pager-left").click();
     });
   },
 };
