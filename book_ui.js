@@ -12,9 +12,15 @@
 Drupal.behaviors.book_ui = {
   attach: function (context, settings) {
     //Drupal.behaviors.book_ui.navSlider();
+    Drupal.behaviors.book_ui.init();
     Drupal.behaviors.book_ui.actions();
     Drupal.behaviors.book_ui.paging();
     Drupal.behaviors.book_ui.sidebarSliding();
+    Drupal.behaviors.book_ui.mouseWheel();
+  },
+
+  init: function() {
+    content = ".node-book .content";
   },
 
   /**
@@ -170,6 +176,21 @@ Drupal.behaviors.book_ui = {
 
     $(".sidebar-toggle").click(function() {
       Drupal.behaviors.book_ui.paging();
+    });
+  },
+
+  /**
+   * Adds mouse wheel support to the pager
+   */
+  mouseWheel: function() {
+    $(content).bind('mousewheel', function(event, delta, deltaX, deltaY) {
+      // @todo: do we need horizontal delta?
+      var pager_item = (delta == 1) ? "#pager-right" : "#pager-left";
+      // trigger click event on the proper pager item
+      $(pager_item).click();
+      // prevent scrolling default behaviour
+      event.preventDefault();
+      event.stopPropagation();
     });
   },
 };
